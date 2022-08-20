@@ -1,21 +1,26 @@
 <template>
-	<view class="scoll-view-container">
-		<scroll-view class="left-scoll-view" :style="{height:wh+'px'}" scroll-y="true" >
-			<view :class="['left-scoll-view-item',isActive===index ? 'active' : '']" v-for="(cate,index) in category" :key="cate.cat_id" @click="handlerCate(index)">
-				{{cate.cat_name}}
-			</view>
-		</scroll-view>
-		<scroll-view class="right-scoll-view" :scroll-top="scollTop" :style="{height:wh+'px'}" scroll-y="true" >
-			<view class="right-scoll-item" v-for="(cate,index) in categoryLevel2" :key="cate.cat_id">
-				<view class="right-scoll-title">/ {{cate.cat_name}} /</view>
-				<view class="right-scoll-level3" >
-					<view class="right-scoll-level3-item" v-for="(childCate,index) in cate.children" :key="childCate.cat_id">
-						<image :src="childCate.cat_icon.replace('dev','web')" @click="goGoodList(childCate)"></image>
-						<text>{{childCate.cat_name}}</text>
+	<view>
+		<!-- 搜索框 -->
+		<my-search @click="goSearch"></my-search>
+		<!-- 分类 -->
+		<view class="scoll-view-container">
+			<scroll-view class="left-scoll-view" :style="{height:wh+'px'}" scroll-y="true" >
+				<view :class="['left-scoll-view-item',isActive===index ? 'active' : '']" v-for="(cate,index) in category" :key="cate.cat_id" @click="handlerCate(index)">
+					{{cate.cat_name}}
+				</view>
+			</scroll-view>
+			<scroll-view class="right-scoll-view" :scroll-top="scollTop" :style="{height:wh+'px'}" scroll-y="true" >
+				<view class="right-scoll-item" v-for="(cate,index) in categoryLevel2" :key="cate.cat_id">
+					<view class="right-scoll-title">/ {{cate.cat_name}} /</view>
+					<view class="right-scoll-level3" >
+						<view class="right-scoll-level3-item" v-for="(childCate,index) in cate.children" :key="childCate.cat_id">
+							<image :src="childCate.cat_icon.replace('dev','web')" @click="goGoodList(childCate)"></image>
+							<text>{{childCate.cat_name}}</text>
+						</view>
 					</view>
 				</view>
-			</view>
-		</scroll-view>
+			</scroll-view>
+		</view>
 	</view>
 </template>
 
@@ -46,7 +51,7 @@
 			async getSysInfo(){
 				let info = await uni.getSystemInfo()
 				// console.log(info);
-				this.wh = info[1].windowHeight
+				this.wh = info[1].windowHeight-50
 			},
 			//获取商品分类信息
 			async getCategotyList(){
@@ -71,6 +76,12 @@
 			goGoodList(childCate){
 				uni.navigateTo({
 					url:`/subpkg/good_list/good_list?cid=${childCate.cat_id}`
+				})
+			},
+			//点击分类页面的搜索框
+			goSearch(){
+				uni.navigateTo({
+					url:'/subpkg/search/search'
 				})
 			}
 		}

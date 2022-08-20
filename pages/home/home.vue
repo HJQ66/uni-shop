@@ -1,5 +1,9 @@
 <template>
 	<view>
+		<!-- 搜索组件 -->
+		<view class="search">
+			<my-search @click="goSearch"></my-search>
+		</view>
 	<!-- 首页轮播图 -->
 		<swiper class="swiper" indicator-dots autoplay indicator-color="white" indicator-active-color="grey">
 			<swiper-item v-for="(swiper,index) in swiperList" :key="swiper.goods_id" class="swiper-item" @click="goGoodDetail(swiper)">
@@ -108,12 +112,23 @@
 				}else{
 					uni.$showErrMsg()
 				}
+			},
+			//点击搜索框,进入搜索页面
+			goSearch(){
+				uni.navigateTo({
+					url:'/subpkg/search/search'
+				})
 			}
 		}
 	}
 </script>
 
 <style lang="scss">
+	.search{
+		position: sticky;
+		top: 0;
+		z-index: 999;
+	}
 	.swiper{
 		width: 100%;
 		.swiper-item,image{
