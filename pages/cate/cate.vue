@@ -56,7 +56,7 @@
 			//获取商品分类信息
 			async getCategotyList(){
 				let result = await uni.$http.get('/api/public/v1/categories')
-				console.log(result);
+				// console.log(result);
 				if(result.data.meta.status == 200){
 					this.category = result.data.message
 					
