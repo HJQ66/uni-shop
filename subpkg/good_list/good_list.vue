@@ -1,20 +1,10 @@
 <template>
 	<view>
-		<view class="" v-if="goodList.length">
-			<!-- 商品信息 -->
-			<view class="goodlist-container" @click="goGoodDetail(good)" v-for="(good,index) in goodList" :key="good.goods_id">
-				<!-- 商品左侧图片 -->
-				<view class="left-good-img">
-					<img class="left-img" :src="good.goods_small_logo" alt="">
-				</view>
-				<!-- 商品右侧详情 -->
-				<view class="right-good-detail">
-					<text class="good-title">{{good.goods_name}}</text>
-					<text class="good-price">￥{{good.goods_price}}.00</text>
-				</view>
-			</view>
-		</view>
-		<view class="notGood-tip" v-else>
+		<block v-for="(good,index) in goodList" :key="good.goods_id">
+			<!-- 自定义组件 --> 
+			<my-goods :good="good" @click="goGoodDetail"></my-goods>
+		</block>
+		<view class="notGood-tip" v-if="!goodList.length">
 			暂无商品数据...
 		</view>
 	</view>
@@ -60,8 +50,10 @@
 					this.total = result.data.message.total
 				}
 			},
-			// 点击页面商品到页面详情
+			
+			// 点击页面商品到页面详情（这个是自定义事件，是在子组件里面触发该事件传参的）
 			goGoodDetail(good){
+				console.log(good);
 				uni.navigateTo({
 					url:`/subpkg/good_detail/good_detail?goods_id=${good.goods_id}`
 				})
@@ -82,6 +74,7 @@
 		//下拉刷新的回调
 		onPullDownRefresh() {
 			this.goodList = []
+			this.goodListQuery.pagenum=1
 			this.getGoodList()
 		}
 	}

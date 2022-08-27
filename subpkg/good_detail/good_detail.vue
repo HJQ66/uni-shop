@@ -37,11 +37,15 @@
 		<rich-text :nodes="goodDetail.goods_introduce"></rich-text>
 		<!-- 商品加入购物车组件 -->
 		<!-- @click左侧按钮点击事件，@buttonClick右侧按钮点击事件 -->
-		<uni-goods-nav class="uni-goods-nav" @click="leftClick" @buttonClick="rightClick" :fill="true" :buttonGroup="buttonGroup" :options="options"  />
+		<uni-goods-nav class="uni-goods-nav" @click="leftClick" @buttonClick="rightClick" :fill="true"
+			:buttonGroup="buttonGroup" :options="options" />
 	</view>
 </template>
 
 <script>
+	import {
+		mapState,mapGetters
+	} from 'vuex'
 	export default {
 		data() {
 			return {
@@ -56,10 +60,10 @@
 				}, {
 					icon: 'cart',
 					text: '购物车',
-					info: 2
+					info: 0
 				}],
 				buttonGroup: [{
-					 text: '加入购物车',
+						text: '加入购物车',
 						backgroundColor: '#ff0000',
 						color: '#fff'
 					},
@@ -68,8 +72,31 @@
 						backgroundColor: '#ffa200',
 						color: '#fff'
 					}
-				]
+				],
+				
 			};
+		},
+		computed: {
+			// 从vuex中获取购物车信息数据
+			...mapState({
+				cartInfo: (state) => {
+					return state.cart.cartInfo
+				},
+			}),
+			...mapGetters(['total'])
+		},
+		watch:{
+			//监听购物车总数量total的变化
+			total:{
+				//页面一开始就监听一次
+				immediate:true,
+				handler(newVal,oldVal){
+					let findResult = this.options.find(item=>item.text=="购物车")
+					if(findResult){
+						findResult.info = newVal
+					}
+				}
+			}
 		},
 		onLoad(e) {
 			// console.log(e);
@@ -82,8 +109,9 @@
 				let result = await uni.$http.get(`/api/public/v1/goods/detail?goods_id=${this.goods_id}`)
 				// console.log(result);
 				if (result.data.meta.status) {
+					//replace的第一个参数是一个正则表达式，正则表达式后面加一个g代表全局替换
 					result.data.message.goods_introduce = result.data.message.goods_introduce.replace(/<img /g,
-						"<img style='display:block'")
+						"<img style='display:block'").replace(/.webp/g,'.jpg')
 					this.goodDetail = result.data.message
 				}
 			},
@@ -97,17 +125,33 @@
 				})
 			},
 			//左侧店铺购物车点击事件
-			leftClick(e){
+			leftClick(e) {
 				// console.log(e);
-				if(e.content.text == '购物车'){
+				if (e.content.text == '购物车') {
 					uni.switchTab({
-						url:'/pages/cart/cart'
+						url: '/pages/cart/cart'
 					})
 				}
 			},
 			//右侧加入购物车，立即购买点击事件
-			rightClick(e){
+			rightClick(e) {
 				// console.log(e);
+				if(e.content.text === "加入购物车"){
+					//添加购物车需要的信息
+					// {goods_id,goods_name,goods_price,goods_count,goods_small_logo,goods_state}
+					const {goods_id,goods_name,goods_price,goods_small_logo,goods_state} = this.goodDetail
+					//整理需要添加购物车信息的数据
+					const cart={
+						goods_id:goods_id,
+						goods_name:goods_name,
+						goods_price:goods_price,
+						goods_count:1,
+						goods_small_logo:goods_small_logo,
+						goods_state:true
+					}
+					//调用store中的添加购物车数据方法
+					this.$store.commit('addCartInfo',cart)
+				}
 			}
 		}
 	}
@@ -128,6 +172,8 @@
 	}
 
 	.good-info {
+		margin-bottom: 20px;
+
 		.good-price {
 			margin: 10px 0;
 
@@ -167,9 +213,12 @@
 			margin-left: 10px;
 		}
 	}
-	.uni-goods-nav{
+
+	.uni-goods-nav {
 		position: sticky;
-		bottom: 0;
+		bottom: 0px;
+		height: 120rpx;
 		z-index: 999;
+		background-color: white;
 	}
 </style>
