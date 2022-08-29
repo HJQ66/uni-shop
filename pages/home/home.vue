@@ -5,7 +5,7 @@
 			<my-search @click="goSearch"></my-search>
 		</view>
 	<!-- 首页轮播图 -->
-		<swiper class="swiper" indicator-dots autoplay indicator-color="white" indicator-active-color="grey">
+		<swiper class="swiper" indicator-dots autoplay indicator-color="grey" indicator-active-color="white">
 			<swiper-item v-for="(swiper,index) in swiperList" :key="swiper.goods_id" class="swiper-item" @click="goGoodDetail(swiper)">
 				<image :src="swiper.image_src" mode="widthFix"></image>
 			</swiper-item>

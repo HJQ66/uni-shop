@@ -47,6 +47,9 @@
 				uni.chooseAddress({
 					success:(res)=>{
 						this.$store.commit('updateAddress',res)
+					},
+					fail: () => {
+						uni.$showErrMsg("您取消选择了！")
 					}
 				})
 			}

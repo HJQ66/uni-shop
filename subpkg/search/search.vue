@@ -6,7 +6,7 @@
 		</view>
 		<!-- 搜索建议 -->
 		<view class="search-advice" v-if="keyWord!=''">
-			<view class="search-advice-item" v-for="(search,index) in searchAdvice" :key="search.goods_id">
+			<view class="search-advice-item" v-for="(search,index) in searchAdvice" :key="search.goods_id" @click="goGoodsDetail(search)">
 				<text class="search-name">{{search.goods_name}}</text>
 				<uni-icons type="forward"></uni-icons>
 			</view>
@@ -102,6 +102,12 @@
 			goGoodList(tag){
 				uni.navigateTo({
 					url:`/subpkg/good_list/good_list?query=${tag}`
+				})
+			},
+			//点击商品列表跳转到商品详情
+			async goGoodsDetail(good){
+				uni.navigateTo({
+					url:`/subpkg/good_detail/good_detail?goods_id=${good.goods_id}`
 				})
 			}
 		}
